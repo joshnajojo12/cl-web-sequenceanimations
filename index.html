@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rocket Launch Sequence — Premium Space Dashboard</title>
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="An interactive premium Rocket Launch Sequence space dashboard demonstrating Javascript async/await, CSS animations, and canvas particles.">
+  <meta name="keywords" content="rocket launch, space dashboard, async javascript, css animations, canvas particles, web sequencing">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Twinkling Starfield Canvas -->
+  <canvas id="starfield"></canvas>
+  
+  <!-- Deep Cosmic Nebula Overlays -->
+  <div class="nebula-purple"></div>
+  <div class="nebula-blue"></div>
+
+  <!-- Main Grid Layout -->
+  <main class="dashboard-container">
+    
+    <!-- Left Column: Space Launch Viewport -->
+    <section class="viewport-section" aria-label="Launch Viewport">
+      <!-- Twinkling Speed Warp Indicator -->
+      <div id="warp-speed-text" class="warp-speed-status">WARP SPEED ACTIVE</div>
+
+      <!-- Centered Countdown Overlay -->
+      <div id="countdown-overlay" class="countdown-overlay hidden"></div>
+
+      <!-- Launch Area -->
+      <div class="launch-pad-container">
+        <!-- Visual effects container (clouds, spark beams) -->
+        <div id="smoke-particles-container" class="smoke-container"></div>
+        <div id="sparkles-container" class="sparkles-container"></div>
+
+        <!-- SVG Rocket + Gantry -->
+        <div id="rocket-assembly" class="rocket-assembly">
+          <svg id="rocket-svg" viewBox="0 0 200 400" width="100%" height="100%" preserveAspectRatio="xMidYMax meet">
+            <!-- Left Gantry Tower -->
+            <g id="gantry-left" class="gantry-tower">
+              <!-- Tower Truss -->
+              <line x1="30" y1="400" x2="30" y2="120" stroke="var(--neon-blue)" stroke-width="4" opacity="0.6" />
+              <line x1="10" y1="400" x2="10" y2="120" stroke="var(--neon-blue)" stroke-width="4" opacity="0.6" />
+              <!-- Diagonal bars -->
+              <path d="M 10 120 L 30 150 M 30 150 L 10 180 M 10 180 L 30 210 M 30 210 L 10 240 M 10 240 L 30 270 M 30 270 L 10 300 M 10 300 L 30 330 M 30 330 L 10 360 M 10 360 L 30 390 M 30 390 L 10 400" stroke="var(--neon-blue)" stroke-width="2" opacity="0.4" />
+              <!-- Gantry Support Arms holding the rocket -->
+              <path id="arm-left-top" class="gantry-arm" d="M 30 180 L 80 180 L 85 190" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+              <path id="arm-left-mid" class="gantry-arm" d="M 30 250 L 78 250 L 82 258" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+              <path id="arm-left-bot" class="gantry-arm" d="M 30 320 L 78 320 L 82 328" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+            </g>
+
+            <!-- Right Gantry Tower -->
+            <g id="gantry-right" class="gantry-tower">
+              <!-- Tower Truss -->
+              <line x1="170" y1="400" x2="170" y2="120" stroke="var(--neon-blue)" stroke-width="4" opacity="0.6" />
+              <line x1="190" y1="400" x2="190" y2="120" stroke="var(--neon-blue)" stroke-width="4" opacity="0.6" />
+              <!-- Diagonal bars -->
+              <path d="M 190 120 L 170 150 M 170 150 L 190 180 M 190 180 L 170 210 M 170 210 L 190 240 M 190 240 L 170 270 M 170 270 L 190 300 M 190 300 L 170 330 M 170 330 L 190 360 M 190 360 L 170 390 M 170 390 L 190 400" stroke="var(--neon-blue)" stroke-width="2" opacity="0.4" />
+              <!-- Gantry Support Arms holding the rocket -->
+              <path id="arm-right-top" class="gantry-arm" d="M 170 180 L 120 180 L 115 190" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+              <path id="arm-right-mid" class="gantry-arm" d="M 170 250 L 122 250 L 118 258" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+              <path id="arm-right-bot" class="gantry-arm" d="M 170 320 L 122 320 L 118 328" stroke="var(--neon-blue)" stroke-width="4" fill="none" />
+            </g>
+
+            <!-- Launch Platform Base -->
+            <g id="launch-pad-base">
+              <rect x="25" y="380" width="150" height="20" rx="4" fill="#1e293b" stroke="var(--neon-blue)" stroke-width="2" />
+              <!-- Deflector shield -->
+              <path d="M 60 380 L 70 360 L 130 360 L 140 380 Z" fill="#0f172a" stroke="var(--neon-purple)" stroke-width="2" />
+            </g>
+
+            <!-- Animated Flashing Launchpad lights -->
+            <circle cx="50" cy="370" r="3" fill="#ef4444" class="launch-light light-red" />
+            <circle cx="150" cy="370" r="3" fill="#ef4444" class="launch-light light-red" />
+            <circle cx="75" cy="370" r="2.5" fill="#3b82f6" class="launch-light light-blue" />
+            <circle cx="125" cy="370" r="2.5" fill="#3b82f6" class="launch-light light-blue" />
+
+            <!-- The Rocket (wrapped in a group that we shake and translate) -->
+            <g id="rocket" class="rocket-idle">
+              <!-- Engine Fire Exhaust group (hidden or sized down by default) -->
+              <g id="thruster-exhaust" class="exhaust-flames">
+                <!-- Core Flame (Dynamic Orange-Yellow-White) -->
+                <path d="M 90 330 Q 100 450 110 330 C 105 380 95 380 90 330 Z" fill="url(#flame-gradient)" filter="url(#glow-filter)" />
+                <path d="M 93 330 Q 100 410 107 330 C 104 360 96 360 93 330 Z" fill="#ffedd5" />
+                <path d="M 97 330 Q 100 370 103 330 Z" fill="#ffffff" />
+                <!-- Side Booster Sparks -->
+                <path d="M 81 325 L 77 350 L 83 325 Z" fill="#f97316" />
+                <path d="M 119 325 L 123 350 L 117 325 Z" fill="#f97316" />
+              </g>
+
+              <!-- Left and Right Booster Shells -->
+              <path d="M 75 260 C 75 260 73 310 75 325 L 85 325 L 85 260 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5" />
+              <path d="M 125 260 C 125 260 127 310 125 325 L 115 325 L 115 260 Z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1.5" />
+              <!-- Booster Cones -->
+              <path d="M 75 260 L 80 240 L 85 260 Z" fill="var(--neon-purple)" />
+              <path d="M 125 260 L 120 240 L 115 260 Z" fill="var(--neon-purple)" />
+
+              <!-- Left Wing / Fin -->
+              <path d="M 78 280 L 60 325 C 60 325 70 328 78 322 Z" fill="var(--neon-purple)" stroke="#6366f1" stroke-width="1.5" />
+              <!-- Right Wing / Fin -->
+              <path d="M 122 280 L 140 325 C 140 325 130 328 122 322 Z" fill="var(--neon-purple)" stroke="#6366f1" stroke-width="1.5" />
+              <!-- Center Fin -->
+              <path d="M 100 290 L 100 325" stroke="var(--neon-purple)" stroke-width="3" />
+
+              <!-- Main Rocket Body Cylinder -->
+              <path d="M 82 170 C 82 170 82 320 82 320 L 118 320 C 118 320 118 170 118 170 Z" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" />
+              <!-- Decorative Neon Blue Stripe down the body -->
+              <rect x="97" y="170" width="6" height="150" fill="var(--neon-blue)" opacity="0.8" />
+              <!-- USA or Flag/Logo placeholder text on body -->
+              <text x="100" y="270" font-family="'Orbitron', sans-serif" font-size="7" font-weight="900" fill="#1e293b" text-anchor="middle" letter-spacing="1">A-G</text>
+
+              <!-- Nose Cone -->
+              <path d="M 82 170 C 82 170 100 100 100 100 C 100 100 118 170 118 170 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.5" />
+              <path d="M 88 140 C 88 140 100 100 100 100 C 100 100 112 140 112 140 Z" fill="var(--neon-blue)" />
+
+              <!-- Cabin Windows -->
+              <circle cx="100" cy="180" r="12" fill="#1e293b" stroke="#cbd5e1" stroke-width="2" />
+              <circle id="window-glass" cx="100" cy="180" r="9" fill="url(#window-gradient)" />
+              <circle cx="100" cy="180" r="9" fill="#06b6d4" opacity="0.3" class="pulse-glass" />
+              
+              <!-- Smaller Second Window -->
+              <circle cx="100" cy="215" r="8" fill="#1e293b" stroke="#cbd5e1" stroke-width="1.5" />
+              <circle cx="100" cy="215" r="6" fill="url(#window-gradient)" />
+
+              <!-- Main Engine Nozzle -->
+              <rect x="88" y="320" width="24" height="10" fill="#475569" rx="2" />
+            </g>
+
+            <!-- SVG Gradients and Filters Definitions -->
+            <defs>
+              <linearGradient id="flame-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="25%" stop-color="#fef08a" />
+                <stop offset="50%" stop-color="#f97316" />
+                <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
+              </linearGradient>
+              <linearGradient id="window-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#0891b2" />
+                <stop offset="100%" stop-color="#0284c7" />
+              </linearGradient>
+              <filter id="glow-filter" x="-50%" y="-50%" width="200%" height="200%">
+                <feGaussianBlur stdDeviation="6" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right Column: Control Center Glass Panel -->
+    <section class="control-section" aria-labelledby="main-title">
+      <div class="control-panel">
+        
+        <!-- Header -->
+        <header class="panel-header">
+          <div class="badge">SYSTEMS ONLINE</div>
+          <h1 id="main-title">Rocket Launch Sequence</h1>
+          <p class="panel-subtitle">ASYNCHRONOUS OPERATIONS TERMINAL</p>
+        </header>
+
+        <!-- Dynamic CRT Terminal Display -->
+        <div class="terminal-screen">
+          <div class="scanline"></div>
+          <div class="terminal-header">
+            <span class="terminal-dot red"></span>
+            <span class="terminal-dot yellow"></span>
+            <span class="terminal-dot green"></span>
+            <span class="terminal-title">TELEMETRY STATS</span>
+          </div>
+          <div class="terminal-body">
+            <div class="telemetry-row">
+              <span class="label">CURRENT PHASE:</span>
+              <span id="stat-phase" class="val text-highlight">PRE-LAUNCH READY</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="label">ENGINE THRUST:</span>
+              <span id="stat-thrust" class="val">0.00 kN</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="label">ALTITUDE:</span>
+              <span id="stat-altitude" class="val">0.00 km</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="label">VELOCITY:</span>
+              <span id="stat-velocity" class="val">0.00 km/s</span>
+            </div>
+            <div class="telemetry-row">
+              <span class="label">STAR TWINKLE RATE:</span>
+              <span id="stat-stars" class="val">1.00x (NORMAL)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Telemetry Step Checklist -->
+        <div class="steps-container">
+          <h2 class="section-title">SEQUENCE TIMELINE</h2>
+          <ul class="sequence-steps" id="sequence-steps">
+            <li class="step-item" id="step-1" data-step="1">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 1: Gantry Retraction</span>
+                <span class="step-desc">Fading in rocket & swinging support structures away.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-2" data-step="2">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 2: Final Countdown</span>
+                <span class="step-desc">Initiating the T-minus 3-second critical count sequence.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-3" data-step="3">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 3: Ignition & Shake</span>
+                <span class="step-desc">Engines firing. Structural vibration test for 1.0s.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-4" data-step="4">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 4: Smoke Ejection</span>
+                <span class="step-desc">Pressurizing thruster nozzle & releasing carbon clouds.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-5" data-step="5">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 5: Lift-off & Ascent</span>
+                <span class="step-desc">Breaking gravity. Smooth upward vertical acceleration.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-6" data-step="6">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 6: Warp Speed Twinkle</span>
+                <span class="step-desc">Entering deep space. High-frequency starfield scintillation.</span>
+              </div>
+            </li>
+            <li class="step-item" id="step-7" data-step="7">
+              <div class="step-status-indicator">
+                <span class="bullet"></span>
+                <span class="check-mark">✓</span>
+              </div>
+              <div class="step-content">
+                <span class="step-title">Phase 7: Orbit Stabilization</span>
+                <span class="step-desc">Achieving orbit. Confirming mission success parameters.</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <!-- Buttons Panel -->
+        <div class="action-buttons">
+          <button id="btn-start" class="btn btn-start" aria-label="Start Launch Sequence">
+            <span class="btn-glow-back"></span>
+            <span class="btn-text">START SEQUENCE</span>
+          </button>
+          <button id="btn-reset" class="btn btn-reset" aria-label="Reset System">
+            <span class="btn-glow-back"></span>
+            <span class="btn-text">RESET TERMINAL</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Celebration Modal Overlays -->
+  <div id="celebration-overlay" class="celebration-overlay hidden">
+    <div class="success-card">
+      <div class="success-icon">🚀</div>
+      <h2 class="success-title">Mission Successful</h2>
+      <p class="success-desc">The rocket has successfully cleared Earth's atmosphere, achieved orbit stabilization, and entered hyperdrive. All systems remain operational.</p>
+      <div class="success-stats">
+        <div class="succ-stat-box">
+          <span class="succ-stat-val">32,840 km/h</span>
+          <span class="succ-stat-label">Velocity</span>
+        </div>
+        <div class="succ-stat-box">
+          <span class="succ-stat-val">420 km</span>
+          <span class="succ-stat-label">Orbit Altitude</span>
+        </div>
+        <div class="succ-stat-box">
+          <span class="succ-stat-val">100%</span>
+          <span class="succ-stat-label">Cargo Integrity</span>
+        </div>
+      </div>
+      <button id="btn-dismiss-success" class="btn btn-dismiss">DISMISS SIGNAL</button>
+    </div>
+    <!-- Canvas for Confetti -->
+    <canvas id="confetti-canvas"></canvas>
+  </div>
+
+  <!-- JavaScript file -->
+  <script src="script.js"></script>
+</body>
+</html>
