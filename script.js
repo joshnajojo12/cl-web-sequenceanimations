@@ -348,7 +348,6 @@ async function startLaunchSequence() {
     rocketAssembly.classList.add('gantry-retracted');
     
     await delay(1800); // Wait for fade-in & gantry swing to complete
-    btnReset.disabled = false; // Enable reset back, user can abort anytime from here
 
     /* ---------------------------------------------------------
        STEP 2: Countdown (3... 2... 1...)
@@ -540,6 +539,7 @@ function resetLaunchSequence() {
 
   // Re-enable Start button
   btnStart.disabled = false;
+  btnReset.disabled = true;
 }
 
 // Event Listeners Binding

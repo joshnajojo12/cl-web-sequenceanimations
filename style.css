@@ -76,19 +76,23 @@ body {
   position: relative;
   z-index: 3;
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  max-height: 100vh;
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
-  padding: 2.5rem;
-  gap: 2.5rem;
+  padding: 1.2rem;
+  gap: 1.2rem;
+  overflow: hidden;
 }
 
 @media (max-width: 1024px) {
   .dashboard-container {
     grid-template-columns: 1fr;
-    grid-template-rows: 1fr auto;
-    padding: 1.5rem;
-    gap: 1.5rem;
+    grid-template-rows: auto auto;
+    height: auto;
+    max-height: none;
+    padding: 1rem;
+    gap: 1rem;
     overflow-y: auto;
   }
 }
@@ -105,14 +109,16 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
-  padding-bottom: 2rem;
+  padding: 1.2rem;
+  height: 100%;
 }
 
 @media (max-width: 1024px) {
   .viewport-section {
     min-height: 480px;
+    height: auto;
   }
 }
 
@@ -170,12 +176,14 @@ body {
 
 /* Launch Pad & Rocket Assembly */
 .launch-pad-container {
-  width: 280px;
-  height: 480px;
+  flex: 1;
+  width: 100%;
+  max-width: 280px;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: flex-end;
+  min-height: 0;
 }
 
 .rocket-assembly {
@@ -296,26 +304,35 @@ body {
 .control-section {
   display: flex;
   flex-direction: column;
+  height: 100%;
+  min-height: 0;
 }
 
 .control-panel {
-  flex: 1;
+  height: 100%;
   border-radius: 20px;
   border: 1px solid var(--glass-border);
   background: var(--glass-bg);
   box-shadow: inset 0 0 24px var(--glass-glow), 0 8px 32px 0 rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 2.2rem;
+  padding: 1.2rem;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  overflow-y: auto;
+  gap: 1rem;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .control-panel {
+    height: auto;
+    overflow: visible;
+  }
 }
 
 @media (max-width: 480px) {
   .control-panel {
-    padding: 1.2rem;
+    padding: 1rem;
   }
 }
 
@@ -364,9 +381,10 @@ body {
   border: 1.5px solid rgba(16, 185, 129, 0.3);
   box-shadow: 0 0 15px var(--terminal-green-dim), inset 0 0 12px rgba(10, 17, 30, 0.9);
   border-radius: 8px;
-  padding: 1.2rem;
+  padding: 0.8rem 1rem;
   position: relative;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .scanline {
@@ -409,11 +427,11 @@ body {
 
 .terminal-body {
   font-family: var(--font-family-mono);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: var(--terminal-green);
   display: flex;
   flex-direction: column;
-  gap: 0.4rem;
+  gap: 0.3rem;
   text-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
 }
 
@@ -431,10 +449,12 @@ body {
 
 /* Timeline/Checklist */
 .steps-container {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
-  margin-top: 0.5rem;
+  gap: 0.6rem;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .section-title {
@@ -443,13 +463,38 @@ body {
   font-weight: 700;
   letter-spacing: 2px;
   color: #64748b;
+  flex-shrink: 0;
 }
 
 .sequence-steps {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 0.6rem;
+  gap: 0.5rem;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom Scrollbar for Sequence Steps */
+.sequence-steps::-webkit-scrollbar {
+  width: 4px;
+}
+.sequence-steps::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 2px;
+}
+.sequence-steps::-webkit-scrollbar-thumb {
+  background: rgba(0, 242, 254, 0.2);
+  border-radius: 2px;
+}
+.sequence-steps::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 242, 254, 0.4);
+}
+
+@media (max-width: 1024px) {
+  .sequence-steps {
+    overflow-y: visible;
+  }
 }
 
 .step-item {
@@ -458,7 +503,7 @@ body {
   gap: 0.8rem;
   background: rgba(15, 23, 42, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.03);
-  padding: 0.7rem 0.9rem;
+  padding: 0.5rem 0.75rem;
   border-radius: 8px;
   transition: all 0.3s ease;
 }
@@ -521,14 +566,14 @@ body {
 }
 
 .step-title {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #94a3b8;
   transition: color 0.3s ease;
 }
 
 .step-desc {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: #475569;
   transition: color 0.3s ease;
 }
@@ -551,16 +596,19 @@ body {
 .action-buttons {
   display: grid;
   grid-template-columns: 1.2fr 0.8fr;
-  gap: 1rem;
-  margin-top: auto;
+  gap: 0.8rem;
+  width: 100%;
+  max-width: 320px;
+  margin-top: 0.6rem;
+  z-index: 4;
 }
 
 .btn {
   font-family: var(--font-family-mono);
   font-size: 0.85rem;
   font-weight: 700;
-  padding: 1.1rem 1.4rem;
-  border-radius: 12px;
+  padding: 0.8rem 1.2rem;
+  border-radius: 10px;
   cursor: pointer;
   outline: none;
   position: relative;
